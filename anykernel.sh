@@ -122,3 +122,31 @@ case "$key_click" in
         ui_print "Unknown key input, skipping installation"
         ;;
 esac
+# LZ4KD-ZRAM 模块安装逻辑
+ui_print "安装 LZ4KD-ZRAM 模块？音量上跳过安装；音量下安装模块"
+ui_print "Install LZ4KD-ZRAM module? Volume up: NO；Volume down: YES"
+
+key_click=""
+while [ "$key_click" = "" ]; do
+    key_click=$(getevent -qlc 1 | awk '{ print $3 }' | grep 'KEY_VOLUME')
+    sleep 0.2
+done
+
+case "$key_click" in
+    "KEY_VOLUMEDOWN")
+        if [ -f "$KSUD_PATH" ] && [ -f "$AKHOME/ZRAM_Lz4kd.zip" ]; then
+            ui_print "Installing LZ4KD-ZRAM Module..."
+            /data/adb/ksud module install "$AKHOME/ZRAM_Lz4kd.zip"
+            ui_print "Installation Complete"
+        else
+            [ ! -f "$KSUD_PATH" ] && ui_print "错误：未找到 KSUD，跳过安装"
+            [ ! -f "$AKHOME/ZRAM_Lz4kd.zip" ] && ui_print "错误：模块文件缺失，跳过安装"
+        fi
+        ;;
+    "KEY_VOLUMEUP")
+        ui_print "跳过 LZ4KD-ZRAM 模块安装"
+        ;;
+    *)
+        ui_print "未知按键输入，跳过安装"
+        ;;
+esac        
