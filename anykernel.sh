@@ -75,10 +75,12 @@ if [ -L "/dev/block/bootdevice/by-name/init_boot_a" ] || [ -L "/dev/block/by-nam
     split_boot
     flash_boot
     ui_print "内核刷入完成！！！ "
+    ui_print "记得按音量下键安装模块！"
 else
     dump_boot
     write_boot
     ui_print "内核刷入完成！！！ "
+    ui_print "记得按音量下键安装模块！"
 fi
 
 # 优先选择模块路径
