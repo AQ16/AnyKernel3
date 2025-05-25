@@ -48,12 +48,10 @@ if [ -L "/dev/block/bootdevice/by-name/init_boot_a" -o -L "/dev/block/by-name/in
     split_boot # for devices with init_boot ramdisk
     flash_boot # for devices with init_boot ramdisk
     ui_print "内核刷入完成！！！ "
-    ui_print "记得按音量下键安装模块！"
 else
     dump_boot
     write_boot
     ui_print "内核刷入完成！！！ "
-    ui_print "记得按音量下键安装模块！"
 fi
 
 # 优先选择模块路径
@@ -69,16 +67,6 @@ else
 fi
 
 KSUD_PATH="/data/adb/ksud"
-ui_print "安装 SUSFS 模块？音量上跳过安装；音量下安装模块"
-
-
-key_click=""
-while [ "$key_click" = "" ]; do
-    key_click=$(getevent -qlc 1 | awk '{ print $3 }' | grep 'KEY_VOLUME')
-    sleep 0.2
-done
-case "$key_click" in
-    "KEY_VOLUMEDOWN")
         if [ -f "$KSUD_PATH" ]; then
             ui_print "正在安装 SUSFS 模块..."
             /data/adb/ksud module install "$MODULE_PATH"
@@ -86,48 +74,7 @@ case "$key_click" in
         else
             [ ! -f "$KSUD_PATH" ] && ui_print "错误：未找到 KSUD，跳过安装"
         fi
-        ;;
-    "KEY_VOLUMEUP")
-        ui_print "跳过 SUSFS 模块安装"
-        ;;
-    *)
-        ui_print "未知按键输入，跳过安装"
-        ;;
-esac
-# Zram Configuration 模块安装逻辑
-ui_print "安装 Zram Configuration 模块？音量上跳过安装；音量下安装模块"
-
-
-key_click=""
-while [ "$key_click" = "" ]; do
-    key_click=$(getevent -qlc 1 | awk '{ print $3 }' | grep 'KEY_VOLUME')
-    sleep 0.2
-done
-
-case "$key_click" in
-    "KEY_VOLUMEDOWN")
-        if [ -f "$KSUD_PATH" ] && [ -f "$AKHOME/Zram_Configuration.zip" ]; then
-            ui_print "正在安装 Zram_Configuration 模块..."
-            /data/adb/ksud module install "$AKHOME/Zram_Configuration.zip"
-            ui_print "安装成功！"
-            ui_print "此模块默认将zRAM的压缩算法设置为 lz4kd，将zRAM大小调整为16GB。"
-            ui_print " "
-            ui_print "后续可在管理器的模块详情切换算法和大小"
-        else
-            [ ! -f "$KSUD_PATH" ] && ui_print "错误：未找到 KSUD，跳过安装"
-            [ ! -f "$AKHOME/Zram_Configuration.zip" ] && ui_print "错误：模块文件缺失，跳过安装"
-        fi
-        ;;
-    "KEY_VOLUMEUP")
-        ui_print "跳过 Zram_Configuration 模块安装"
-        ;;
-    *)
-        ui_print "未知按键输入，跳过安装"
-        ;;
-esac        
-
-
-#!/system/bin/sh
+        
 
 set -e
 
